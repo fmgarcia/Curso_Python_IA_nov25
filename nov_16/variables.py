@@ -59,3 +59,20 @@ print('4'*5)  # 44444
 print(bool(0))  # False
 print(bool(1))  # True
 print(bool(-3))  # True, cualquier número distinto de 0 es True
+
+# Asignaciones compuestas
+z = 10
+z += 5  # z = z + 5
+print("Valor de z después de z += 5:", z)  # 15
+z *= 2  # z = z * 2
+print("Valor de z después de z *= 2:", z)  # 30
+z -= 10  # z = z - 10
+print("Valor de z después de z -= 10:", z)  # 20
+z /= 4  # z = z / 4
+print("Valor de z después de z /= 4:", z)  # 5.0
+z //= 2  # z = z // 2
+print("Valor de z después de z //= 2:", z)  # 2
+z **= 3  # z = z ** 3
+print("Valor de z después de z **= 3:", z)  # 8
+z %= 3  # z = z % 3
+print("Valor de z después de z %= 3:", z)  # 2
