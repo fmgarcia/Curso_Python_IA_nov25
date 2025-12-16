@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora IMC y Grasa Corporal</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f6fa;
+            --text-color: #2c3e50;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        #resultado {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            display: none;
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .note {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Calculadora de Salud</h1>
+    
+    <div class="form-group">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" id="peso" placeholder="Ej: 70.5" step="0.1" min="20" max="300">
+    </div>
+
+    <div class="form-group">
+        <label for="altura">Altura (m)</label>
+        <input type="number" id="altura" placeholder="Ej: 1.75" step="0.01" min="0.5" max="2.5">
+    </div>
+
+    <div class="form-group">
+        <label for="edad">Edad (años)</label>
+        <input type="number" id="edad" placeholder="Ej: 30" min="10" max="120">
+    </div>
+
+    <div class="form-group">
+        <label for="sexo">Sexo Biológico</label>
+        <select id="sexo">
+            <option value="H">Hombre</option>
+            <option value="M">Mujer</option>
+        </select>
+    </div>
+
+    <button onclick="calcular()">Calcular Resultados</button>
+    <div id="error" class="error-message"></div>
+
+    <div id="resultado">
+        <div class="result-item">
+            <div class="result-label">IMC (Índice de Masa Corporal)</div>
+            <div class="result-value" id="val-imc">--</div>
+            <div id="val-clasificacion" style="color: var(--primary-color); font-weight: 600;">--</div>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Grasa Corporal Estimada (Deurenberg)</div>
+            <div class="result-value" id="val-grasa">--%</div>
+        </div>
+    </div>
+
+    <div class="note">
+        Nota: El cálculo de grasa corporal es una estimación basada en la fórmula de Deurenberg (IMC, edad y sexo). No sustituye mediciones médicas.
+    </div>
+</div>
+
+<script>
+    async function calcular() {
+        const peso = document.getElementById('peso').value;
+        const altura = document.getElementById('altura').value;
+        const edad = document.getElementById('edad').value;
+        const sexo = document.getElementById('sexo').value;
+        const errorDiv = document.getElementById('error');
+        const resultadoDiv = document.getElementById('resultado');
+
+        // Reset UI
+        errorDiv.style.display = 'none';
+        resultadoDiv.style.display = 'none';
+
+        // Validación básica en frontend
+        if (!peso || !altura || !edad) {
+            mostrarError("Por favor, completa todos los campos.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/calcular', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    peso: parseFloat(peso),
+                    altura: parseFloat(altura),
+                    edad: parseInt(edad),
+                    sexo: sexo
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Error en el cálculo");
+            }
+
+            // Mostrar resultados
+            document.getElementById('val-imc').textContent = data.imc.toFixed(2);
+            document.getElementById('val-clasificacion').textContent = data.clasificacion;
+            document.getElementById('val-grasa').textContent = data.grasa_corporal.toFixed(2) + '%';
+            
+            // Color de clasificación
+            const clasif = document.getElementById('val-clasificacion');
+            if (data.clasificacion.includes("Normal")) clasif.style.color = "#27ae60";
+            else if (data.clasificacion.includes("Sobrepeso")) clasif.style.color = "#f39c12";
+            else if (data.clasificacion.includes("Obesidad")) clasif.style.color = "#e74c3c";
+            else clasif.style.color = "#3498db";
+
+            resultadoDiv.style.display = 'block';
+
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    }
+
+    function mostrarError(mensaje) {
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = mensaje;
+        errorDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
