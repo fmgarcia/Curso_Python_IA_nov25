@@ -25,3 +25,37 @@ print("Sueldo con dos decimales: {:.2f}".format(sueldo)) # Sueldo con dos decima
 nombre = "Francisco"
 edad = 45
 print((f"{nombre:>10s}{edad:>5d}"))  # Alineación a la derecha
+a=None # Variable sin valor asignado
+print("Valor de a:", a)  # Valor de a: None
+print(type(nombre))  # <class 'str'>
+print(type(a))    # <class 'NoneType'>
+
+# Operaciones con variables
+x = 10
+y = 3
+suma = x + y
+resta = x - y
+producto = x * y
+division = x / y
+division_entera = x // y
+potencia = x ** y
+modulo = x % y
+print("Suma:", suma)  # Suma: 13
+print("Resta:", resta)  # Resta: 7
+print("Producto:", producto)  # Producto: 30
+print("División:", division)  # División: 3.3333333333333335
+print("División entera:", division_entera)  # División entera: 3
+print("Potencia:", potencia)  # Potencia: 1000
+print("Módulo:", modulo)  # Módulo/Resto: 1
+
+# Precedencia de operadores y conversiones de tipo
+print((4+5)*2)  # 18
+print(4+5*2)    # 14
+#print('4'+5) # TypeError: can only concatenate str (not "int") to str
+print('4'+str(5))  # 45
+print(int('4')+5)  # 9
+print(float('4.5')+5)  # 9.5
+print('4'*5)  # 44444
+print(bool(0))  # False
+print(bool(1))  # True
+print(bool(-3))  # True, cualquier número distinto de 0 es True
