@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Gráfica</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Plotly.js CDN para gráficos interactivos -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="es" title="Español">🇪🇸</button>
+                <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+                <button class="lang-btn" data-lang="fr" title="Français">🇫🇷</button>
+                <button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button>
+            </div>
+            <h1 data-i18n="title">🧮 Calculadora Gráfica</h1>
+            <p class="subtitle" data-i18n="subtitle">Ingresa una función matemática y visualiza su gráfica en tiempo real</p>
+        </header>
+
+        <main>
+            <!-- Sistema de pestañas -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="graphs" data-i18n="tab_graphs">
+                    📈 Funciones Trigonométricas
+                </button>
+                <button class="tab-btn" data-tab="calculator" data-i18n="tab_calculator">
+                    🔢 Operaciones Básicas
+                </button>
+            </div>
+
+            <!-- Contenido de pestaña: Funciones Trigonométricas -->
+            <div class="tab-content active" id="graphs-tab">
+            <!-- Sección de entrada -->
+            <section class="input-section">
+                <div class="input-group">
+                    <label for="functionInput">f(x) =</label>
+                    <input 
+                        type="text" 
+                        id="functionInput" 
+                        data-i18n-placeholder="input_placeholder"
+                        placeholder="Ej: sin(x) + x^2, cos(2*x), exp(-x^2)"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Controles de rango -->
+                <div class="range-controls">
+                    <div class="range-group">
+                        <label for="xMin" data-i18n="range_min">x mín:</label>
+                        <input type="number" id="xMin" value="-10" step="1">
+                    </div>
+                    <div class="range-group">
+                        <label for="xMax" data-i18n="range_max">x máx:</label>
+                        <input type="number" id="xMax" value="10" step="1">
+                    </div>
+                    <div class="range-group">
+                        <label for="numPuntos" data-i18n="range_points">Puntos:</label>
+                        <input type="number" id="numPuntos" value="200" min="10" max="1000" step="10">
+                    </div>
+                </div>
+
+                <button id="graphButton" class="btn-primary" data-i18n="btn_graph">
+                    📈 Graficar
+                </button>
+            </section>
+
+            <!-- Área de mensajes de error -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <!-- Área del gráfico -->
+            <section class="graph-section">
+                <div id="graphContainer"></div>
+            </section>
+
+            <!-- Ejemplos de funciones -->
+            <section class="examples-section">
+                <h3 data-i18n="examples_title">Ejemplos de funciones:</h3>
+                <div class="examples-grid">
+                    <button class="example-btn" data-func="sin(x)">sin(x)</button>
+                    <button class="example-btn" data-func="cos(x)">cos(x)</button>
+                    <button class="example-btn" data-func="tan(x)">tan(x)</button>
+                    <button class="example-btn" data-func="x^2">x²</button>
+                    <button class="example-btn" data-func="x^3 - 3*x">x³ - 3x</button>
+                    <button class="example-btn" data-func="sin(x) + cos(2*x)">sin(x) + cos(2x)</button>
+                    <button class="example-btn" data-func="exp(-x^2)">e^(-x²)</button>
+                    <button class="example-btn" data-func="log(abs(x) + 1)">log(|x| + 1)</button>
+                    <button class="example-btn" data-func="sqrt(abs(x))">√|x|</button>
+                    <button class="example-btn" data-func="sin(x)/x">sin(x)/x</button>
+                </div>
+            </section>
+
+            <!-- Ayuda -->
+            <section class="help-section">
+                <details>
+                    <summary data-i18n="help_title">📖 Funciones disponibles</summary>
+                    <ul>
+                        <li><strong data-i18n="help_trig">Trigonométricas:</strong> sin(x), cos(x), tan(x)</li>
+                        <li><strong data-i18n="help_exp">Exponencial:</strong> exp(x) o e^x</li>
+                        <li><strong data-i18n="help_log">Logaritmo:</strong> log(x) (logaritmo natural)</li>
+                        <li><strong data-i18n="help_sqrt">Raíz cuadrada:</strong> sqrt(x)</li>
+                        <li><strong data-i18n="help_abs">Valor absoluto:</strong> abs(x)</li>
+                        <li><strong data-i18n="help_pow">Potencias:</strong> x^2, x^3, x**2</li>
+                        <li><strong data-i18n="help_const">Constantes:</strong> pi, e</li>
+                        <li><strong data-i18n="help_ops">Operadores:</strong> +, -, *, /</li>
+                    </ul>
+                </details>
+            </section>
+            </div>
+
+            <!-- Contenido de pestaña: Calculadora Básica -->
+            <div class="tab-content" id="calculator-tab">
+            <!-- Calculadora Básica -->
+            <section class="calculator-section">
+                <h3 data-i18n="calc_title">🔢 Calculadora Básica</h3>
+                <div class="calc-inputs">
+                    <input type="number" id="calcA" data-i18n-placeholder="calc_num1" placeholder="Número 1" step="any">
+                    <span id="calcOperator">+</span>
+                    <input type="number" id="calcB" data-i18n-placeholder="calc_num2" placeholder="Número 2" step="any">
+                </div>
+                <div class="calc-operations">
+                    <button class="calc-btn" data-op="+" data-i18n="calc_add">+ Sumar</button>
+                    <button class="calc-btn" data-op="-" data-i18n="calc_sub">− Restar</button>
+                    <button class="calc-btn" data-op="*" data-i18n="calc_mult">× Multiplicar</button>
+                    <button class="calc-btn" data-op="/" data-i18n="calc_div">÷ Dividir</button>
+                    <button class="calc-btn" data-op="**" data-i18n="calc_pow">^ Potencia</button>
+                    <button class="calc-btn" data-op="sqrt" data-i18n="calc_sqrt">√ Raíz</button>
+                </div>
+                <div id="calcResult" class="calc-result"><span data-i18n="calc_result">Resultado:</span> -</div>
+            </section>
+            </div>
+        </main>
+
+        <footer>
+            <p data-i18n="footer">Desarrollado con Flask + Plotly.js | EOI 2025</p>
+        </footer>
+    </div>
+
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
