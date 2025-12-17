@@ -62,3 +62,27 @@
 #     print(f"El área del cuadrado es: {lado * lado}")
 # else:
 #     print("Opción incorrecta")
+
+# Ejemplo de anidamiento de condicionales
+# num = int(input("Dime un número: "))
+# if num < 0:
+#     print("No se puede calcular la raíz cuadrada de un número negativo")
+# else:
+#     sqrt = num ** 0.5
+#     print(f"Raíz de {num} = {sqrt:.2f}")
+#     if sqrt.is_integer():
+#         print("La raíz es un número entero")
+#     else:
+#         print("La raíz es un número decimal")
+
+# Ejercicio pág 29 documento 3.
+# precio = 800
+# salario = float(input("inserte el salario:"))
+# if salario < 25000:
+#     precio -= precio * 0.15 # aplicar descuento del 15%
+#     hijos = int(input("inserte el numero de hijos:"))
+#     if hijos > 2:
+#         precio -= 100 # descuento adicional de 100 euros para familias numerosas
+# print(f"el precio del curso es de: {precio}")
+
+        
