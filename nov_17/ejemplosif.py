@@ -85,4 +85,39 @@
 #         precio -= 100 # descuento adicional de 100 euros para familias numerosas
 # print(f"el precio del curso es de: {precio}")
 
+# Ejemplo operador ternario
+# num = int(input("Número del 1 al 10: "))
+# res = "par" if num % 2 == 0 else "impar" # operador ternario. Asignamos "par" o "impar" a res según la condición
+# print(f"El número es {res}")
+
+# Otro ejemplo típico de operador ternario
+# num = int(input("Número del 1 al 10: "))
+# print(f"El número es {'par' if num % 2 == 0 else 'impar'}")
+
+# Ejemplo pluralización con operador ternario
+# euros = 2
+# print(f"Tiene usted {euros} euro{'s' if euros != 1 else ''}.")
+
+# Ejemplo uso de operador or para valores por defecto
+# nombre = input("Dime tu nombre: ")
+# nombre = nombre or "Nadie"
+# print(f"Eres {nombre}")
+
+# nombre = input("Dime tu nombre: ") or "Nadie"
+# print(f"Eres {nombre}")
+
+# nombre = input("Dime tu nombre: ") or "Nadie"
+# print(f"Eres {nombre} y tu nombre tiene {len(nombre)} caracteres.")
+# print(f"Eres {nombre} y la inicial de tu nombre es {nombre[0]}.")
+
+# Ejemplo uso de operador or con input numérico
+# Trasnformar el input (ya sea 0 o cadena vacía) en un valor por defecto
+# sueldo = int(input("Introduce tu sueldo: ") or 0) or 20000
+# print(f"Tu sueldo es {sueldo}.")
+
+# Concatenación de operadores ternarios
+# num = int(input("Número entre 1 y 100 que sea par: "))
+# print("Número no válido" if num <= 0 or num > 100 else "Número par" if num % 2 == 0 else "Número impar")
+
+# print(f"Tu sueldo es {int(input('Introduce tu sueldo: ') or 0) or 20000}.")
         
