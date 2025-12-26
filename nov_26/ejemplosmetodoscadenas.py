@@ -42,3 +42,11 @@ traduccion_inversa = palabra_en + separador + palabra_es
 print(traduccion_inversa)
 traduccion_inversa = traduce.partition(":")[2] + traduce.partition(":")[1] + traduce.partition(":")[0]
 print(traduccion_inversa)
+
+# Ejemplos de métodos de cambio de mayúsculas/minúsculas
+frase = "Programo en Python"
+print(frase.upper()) # Todo en mayúsculas
+print(frase.lower()) # Todo en minúsculas
+print(frase.capitalize()) # Solo primera letra mayúsculas
+print(frase.title()) # Primera letra de cada palabra mayúscula
+print(frase.swapcase()) # Intercambia mayus/minus
