@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Precio Curso</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #5f6368;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        input:disabled {
+            background-color: #f1f3f4;
+            cursor: not-allowed;
+        }
+        button {
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        #resultado {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #e8f0fe;
+            border-radius: 6px;
+            color: #174ea6;
+            display: none;
+        }
+        .price-tag {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            margin: 0.5rem 0;
+        }
+        ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+            color: #444;
+        }
+        li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Calculadora de Matrícula</h1>
+    
+    <div class="form-group">
+        <label for="salario">Salario Anual (€)</label>
+        <input type="number" id="salario" placeholder="Introduce tu salario" min="0" step="100">
+    </div>
+
+    <div class="form-group">
+        <label for="hijos">Número de Hijos</label>
+        <input type="number" id="hijos" placeholder="Solo si aplica descuento" min="0" disabled>
+    </div>
+
+    <button onclick="calcularPrecio()">Calcular Precio</button>
+
+    <div id="resultado">
+        <span class="price-tag" id="precioFinal"></span>
+        <div id="detalles"></div>
+    </div>
+</div>
+
+<script>
+    let UMBRAL_SALARIO = 0;
+
+    // 1. Al cargar, pedimos la configuración al backend
+    // Esto evita tener "25000" escrito en el código JS (hardcode)
+    window.onload = async function() {
+        try {
+            const response = await fetch('/api/config');
+            const config = await response.json();
+            UMBRAL_SALARIO = config.umbral_salario;
+            console.log("Configuración cargada. Umbral salario:", UMBRAL_SALARIO);
+        } catch (error) {
+            console.error("Error cargando configuración:", error);
+            alert("Error conectando con el servidor. Asegúrate de ejecutar app.py");
+        }
+    };
+
+    // 2. Escuchamos cambios en el salario para activar/desactivar el campo hijos
+    const salarioInput = document.getElementById('salario');
+    const hijosInput = document.getElementById('hijos');
+
+    salarioInput.addEventListener('input', function() {
+        const salario = parseFloat(this.value);
+        
+        // Lógica de activación visual basada en la configuración del backend
+        if (!isNaN(salario) && salario < UMBRAL_SALARIO) {
+            hijosInput.disabled = false;
+            hijosInput.placeholder = "Introduce número de hijos";
+        } else {
+            hijosInput.disabled = true;
+            hijosInput.value = ''; // Limpiamos si se desactiva
+            hijosInput.placeholder = "No aplica descuento por hijos";
+        }
+    });
+
+    // 3. Función para calcular
+    async function calcularPrecio() {
+        const salario = document.getElementById('salario').value;
+        const hijos = document.getElementById('hijos').value;
+
+        if (!salario) {
+            alert("Por favor, introduce un salario.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/calcular', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    salario: parseFloat(salario),
+                    hijos: hijos ? parseInt(hijos) : 0
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Mostrar resultados
+            const resultadoDiv = document.getElementById('resultado');
+            const precioTag = document.getElementById('precioFinal');
+            const detallesDiv = document.getElementById('detalles');
+
+            precioTag.textContent = `${data.precio_final.toFixed(2)} €`;
+            
+            // Crear lista de detalles
+            let htmlDetalles = '<ul>';
+            data.desglose.forEach(item => {
+                htmlDetalles += `<li>${item}</li>`;
+            });
+            htmlDetalles += '</ul>';
+            detallesDiv.innerHTML = htmlDetalles;
+
+            resultadoDiv.style.display = 'block';
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al realizar el cálculo.");
+        }
+    }
+</script>
+
+</body>
+</html>
