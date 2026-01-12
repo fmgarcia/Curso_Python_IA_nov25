@@ -27,6 +27,7 @@ frutas.insert(-2, 'uva')  # Inserta 'uva' en la penúltima posición ['manzana',
 frutas.remove('cereza')  # Elimina 'cereza' ['manzana', 'kiwi', 'mango', 'uva', 'durazno', 'naranja']. Borra la primera ocurrencia
 fruta_eliminada = frutas.pop()  # Elimina y devuelve el último elemento 'naranja' ['manzana', 'kiwi', 'mango', 'uva', 'durazno']
 fruta_eliminada_pos = frutas.pop(1)  # Elimina y devuelve el elemento en la posición 1 'kiwi' ['manzana', 'mango', 'uva', 'durazno']
+del frutas[0]  # Elimina el elemento en la posición 0 ['mango', 'uva', 'durazno']
 # fruta_eliminada_no_existe = frutas.remove('piña')  # ValueError: list.remove(x): x not in list
 frutas.clear()  # Elimina todos los elementos de la lista []
 
@@ -98,3 +99,14 @@ np_mediana = np.median(np_numeros)  # 30.0
 np_varianza = np.var(np_numeros, ddof=1)  # 400.0
 np_desviacion_estandar = np.std(np_numeros, ddof=1)  # 20.0
 print(f"Numpy - Media: {np_media}, Mediana: {np_mediana}, Varianza: {np_varianza}, Desviación Estándar: {np_desviacion_estandar}")
+
+# Repetición y combinación de listas
+numeros = [1, 2, 3, 4, 5]
+numeros2 = [6, 7, 8, 9, 10]
+numeros_repetidos = numeros * 3  # [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5] Repite la lista 3 veces
+numeros_combinados = numeros + [6, 7, 8]  # [1, 2, 3, 4, 5, 6, 7, 8] Combina dos listas
+combinacion_multiple = numeros + numeros2  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] Combina dos listas
+#numeros = numeros + numeros2  # Actualiza la lista original combinándola con otra lista
+#numeros += numeros2  # Actualiza la lista original combinándola con otra lista
+numeros.extend(numeros2)  # Actualiza la lista original combinándola con otra lista
+print(numeros)
