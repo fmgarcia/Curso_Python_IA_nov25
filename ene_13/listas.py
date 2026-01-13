@@ -170,3 +170,39 @@ pares = [x for x in lista_original if x % 2 == 0]  # Números pares [2, 4]
 palabras = ['hola', 'mundo', 'python', 'es', 'genial']
 mas_de_tres_letras = [e for e in palabras if len(e) > 3]  # Palabras con más de 3 letras ['hola', 'mundo', 'python', 'genial']
 iniciales_palabras_mas_de_tres_letras = [e[0] for e in palabras if len(e) > 3]  # Iniciales de palabras con más de 3 letras ['h', 'm', 'p', 'g']
+lista_escalonada_pi = [int(digito) for digito in str(3.1415926535) if digito != '.']  # [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+
+lista_escalonada_de_0 = [[0]*i for i in range(1, 6)]  # [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0]]
+for fila in lista_escalonada_de_0:
+    for col in fila:
+        print(col, end=' ')
+    print()
+
+import random
+capas_neuronales = [[random.random()]*e for e in [2,10,8,6,3]]
+print(capas_neuronales)
+
+
+# Búsqueda en listas
+print("Búsqueda en listas")
+frutas = ['manzana', 'banana', 'cereza', 'durazno']
+if "banana" in frutas:
+    print("La banana está en la lista de frutas.")
+print("Índice de 'cereza':", frutas.index('cereza'))  # 2
+# print("Índice de 'piña':", frutas.index('piña'))  # ValueError: 'piña' is not in list
+conteo_banana = frutas.count('banana')  # 1
+print("La banana aparece", conteo_banana, "veces en la lista de frutas.")
+conteo_pinya = frutas.count('piña')  # 0
+print("La piña aparece", conteo_pinya, "veces en la lista de frutas.")
+
+# Desempaquetado de listas
+print("Desempaquetado de listas")
+colores = ['rojo', 'verde', 'azul']
+r, g, b = colores
+print(r, g, b)
+pantalla = [
+    [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) 
+     for _ in range(1920)] 
+    for _ in range(1080)
+]
+r, g, b = pantalla[0][0] # Desempaquetado del primer píxel
