@@ -200,9 +200,96 @@ print("Desempaquetado de listas")
 colores = ['rojo', 'verde', 'azul']
 r, g, b = colores
 print(r, g, b)
+'''
 pantalla = [
     [(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) 
      for _ in range(1920)] 
     for _ in range(1080)
 ]
 r, g, b = pantalla[0][0] # Desempaquetado del primer píxel
+'''
+
+tiempos = [9.58, 9.73, 9.69, 9.72, 9.74, 9.63, 9.68, 9.71, 9.70, 9.75]
+tiempos.sort()
+oro, plata, bronce, *resto = tiempos
+print("Oro:", oro, "Plata:", plata, "Bronce:", bronce, "Resto:", resto)
+
+# Generar una lista a partir de otra lista o varias listas
+print("Generar una lista a partir de otra lista o varias listas")
+lista1 = [1, 2, 3]
+lista2 = [4, 5, 6]
+combinada = [a + b for a, b in zip(lista1, lista2)]  # [5, 7, 9]
+lista3 = lista1 + lista2  # [1, 2, 3, 4, 5, 6]
+lista4 = [*lista1, *lista2, 7, 8]  # [1, 2, 3, 4, 5, 6, 7, 8]
+
+primero = ["Fran", "Ana", "Luis"]
+segundo = ["Paco", "Marta", "Sofía"]
+instituto = [primero, segundo]  # Lista de listas [['Fran', 'Ana', 'Luis'], ['Paco', 'Marta', 'Sofía']]
+instituto_unido = [*primero, *segundo]  # Lista unida ['Fran', 'Ana', 'Luis', 'Paco', 'Marta', 'Sofía']
+
+nombres = ["Ana", "Luis", "Marta"]
+apellidos = ["García", "Pérez", "López"]
+nombres_completos = [f"{n} {a}" for n, a in zip(nombres, apellidos)]  # ['Ana García', 'Luis Pérez', 'Marta López']
+print(nombres_completos)
+
+# Recorrer listas de listas
+print("Recorrer listas de listas")
+for i, clase in enumerate(instituto):
+    print(f"Clase {i+1}:")
+    for j, alumno in enumerate(clase):
+        print(f"Alumno: {alumno}")
+        
+# Imprimir listas
+print("Imprimir listas")
+titulos = ['Nombre', 'Precio', 'Cantidad', 'Total']
+productos = [
+    ['Manzana', 0.5, 10, 5.0],
+    ['Banana', 0.3, 15, 4.5],
+    ['Cereza', 2.0, 5, 10.0]
+]
+
+print(f"{titulos[0]:<10} | {titulos[1]:<10} | {titulos[2]:<10} | {titulos[3]:<10}")
+print("-" * 50)
+for producto in productos:
+    nombre, precio, cantidad, total = producto
+    print(f"{nombre:<10} | {precio:<10.2f} | {cantidad:<10} | {total:<10.2f}")
+    
+# copiar con copy
+copia_instituto = instituto.copy()  # Copia superficial de la lista instituto
+copia_instituto[0][0] = "Roberto"  # Modifica el primer alumno de la primera clase
+print("Instituto original después de modificar la copia:", instituto)  # Muestra que el instituto original también se ve afectado
+
+# copiar en profundidad con deepcopy de la librería copy
+import copy
+copia_profunda_instituto = copy.deepcopy(instituto)  # Copia profunda de la lista instituto
+copia_profunda_instituto[0][0] = "Carlos"  # Modifica el primer alumno de la primera clase
+print("Copia profunda del instituto después de la modificación:", copia_profunda_instituto)  # Muestra la copia profunda modificada
+print("Instituto original después de modificar la copia profunda:", instituto)  # Muestra que
+
+# Ejemplos de map y filter
+print("Ejemplos de map y filter")
+numeros = [1, 2, 3, 4, 5]
+cuadrados = list(map(lambda x: x**2, numeros))  # [1, 4, 9, 16, 25]
+cuadrados_comp = [x**2 for x in numeros]  # Usando comprensión de listas [1, 4, 9, 16, 25]
+
+def varios_pasos(x):
+    x += 2
+    x *= 3
+    return x
+resultados_varios_pasos = list(map(varios_pasos, numeros))  # [9, 12, 15, 18, 21]
+print(resultados_varios_pasos)
+
+numeros_filtrados = list(filter(lambda x: x % 2 == 0, numeros))  # [2, 4]
+numeros_filtrados_comp = [x for x in numeros if x % 2 == 0]  # Usando comprensión de listas [2, 4]
+
+# Dado un conjunto de numeros, obtener una lista con los cuadrados de los números impares, con programación estructurada, funcional y comprensión de listas
+numeros = [1, 2, 3, 4, 5]
+# Programación estructurada
+numeros_impares_cuadrados = []
+for x in numeros:
+    if x % 2 != 0:
+        numeros_impares_cuadrados.append(x**2)
+# Programación funcional        
+numeros_con_map_y_filter = list(map(lambda x: x**2, filter(lambda x: x % 2 != 0, numeros)))  # [1, 9, 25]. Programación funcional
+# Comprehensión de listas
+numeros_con_comp = [x**2 for x in numeros if x % 2 != 0]  # Usando comprensión de listas [1, 9, 25]
