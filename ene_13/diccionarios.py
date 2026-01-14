@@ -194,12 +194,40 @@ palabras = ["rojo", "verde", "azul"]
 longitudes = { palabra: len(palabra) for palabra in palabras if 'e' in palabra }
 print(longitudes) # {'verde': 5}
 
-
+# A partir de un texto, crear un diccionario con las palabras y su longitud (sin signos de puntuación y en minúsculas)
 import re
 texto = "En un lugar de La Mancha, de cuyo nombre no quiero acordarme: Existía una persona... y más"
 diccionario = {}
-separadores = "[,;\".\\n ]"  # Espacios, comas, puntos, saltos de línea
+separadores = "[,;:\".\\n ]"  # Espacios, comas, puntos, saltos de línea
 for palabra in re.split(separadores, texto):
     if len(palabra) > 0:
         diccionario[palabra.lower()] = len(palabra)
 print(diccionario)
+
+# El mismo ejercicio sin expresiones regulares
+texto = "En un lugar de La Mancha, de cuyo nombre no quiero acordarme: Existía una persona... y más"
+diccionario = {}
+for palabra in texto.split():
+    diccionario[palabra.lower()] = len(palabra)
+print(diccionario)
+
+# A partir de un texto, crear un diccionario con las palabras y el número de veces que aparecen (sin signos de puntuación y en minúsculas)
+# Análisis de sentimiento básico
+import re
+texto = '''
+Hoy decidí despertar con gratitud, reconociendo que cada amanecer es un regalo extraordinario. Al abrir los ojos, sentí una profunda paz interior y la certeza de que este día está lleno de posibilidades maravillosas.
+Tengo la confianza plena en que soy capaz de alcanzar mis sueños. Afrontaré cualquier reto con valentía y entusiasmo, sabiendo que cada paso es un progreso hacia mi éxito personal. Elijo rodearme de armonía, compartir bondad con los demás y mantener una actitud brillante ante la vida.
+Mi corazón está lleno de esperanza y alegría, porque entiendo que mi fortaleza reside en mi capacidad de amar y de ver el lado luminoso de las cosas. Hoy es una oportunidad perfecta para florecer.
+'''
+palabras_positivas = ["mola", "genial", "bueno", "excelente", "fantástico", "gratitud", "paz", "éxito", "armonía", "bondad", "brillante", "esperanza", "alegría", "fortaleza", "amar", "luminoso", "florecer"]
+palabras_negativas = ["malo", "horrible", "terrible", "pésimo", "horroroso", "odio", "tristeza", "fracaso", "conflicto", "oscuridad", "debilidad", "temor", "desesperanza", "llorar", "sufrir"]
+diccionario = {}
+separadores = "[,;:\".\\n ]"  # Espacios, comas, puntos, saltos de línea
+numero_minimo_letras = 2
+diferencia_positivas_negativas = 2
+for palabra in re.split(separadores, texto):
+    if len(palabra) > numero_minimo_letras:
+        diccionario[palabra.lower()] = diccionario[palabra.lower()] + 1 if palabra.lower() in diccionario else 1
+numero_palabras_positivas = sum(diccionario[palabra] for palabra in diccionario if palabra in palabras_positivas)
+numero_palabras_negativas = sum(diccionario[palabra] for palabra in diccionario if palabra in palabras_negativas)
+print("El texto es: ", "POSITIVO" if numero_palabras_positivas > numero_palabras_negativas+diferencia_positivas_negativas else "NEGATIVO" if numero_palabras_negativas > numero_palabras_positivas+diferencia_positivas_negativas else "NEUTRO")
