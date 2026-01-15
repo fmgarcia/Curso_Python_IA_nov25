@@ -7,8 +7,8 @@ api_key = "6bff5b66e01940a4a4730dad785bbab3"
 ruta_fichero = './ficheros/clasificacion_liga.csv'
 
 
-def obtener_clasificacion(url):
-    headers = {"X-Auth-Token": api_key, "User-Agent": "PostmanRuntime/7.51.0"}
+def obtener_clasificacion(url,headers):
+    
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
@@ -39,6 +39,7 @@ def obtener_clasificacion(url):
 
 
 if __name__ == "__main__":
-    for anyo in range(2015, 2026):   
+    for anyo in range(2015, 2026):
+        headers = {"X-Auth-Token": api_key, "User-Agent": "PostmanRuntime/7.51.0"}   
         url = f"http://api.football-data.org/v4/competitions/PD/standings?season={anyo}"
-        obtener_clasificacion(url)
+        obtener_clasificacion(url,headers)
