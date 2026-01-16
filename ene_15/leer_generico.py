@@ -10,8 +10,9 @@ x_rapidapi_host = "imdb236.p.rapidapi.com"
 url_base = "https://imdb236.p.rapidapi.com"
 endpoint_id_base = "/api/imdb/"
 ruta_fichero = './ficheros/imdb.csv'
-peticiones_api = 5  # Número máximo de peticiones API permitidas por hora
-tiempo_entre_peticiones = 5  # segundos
+peticiones_api = 20  # Número máximo de peticiones API permitidas por hora
+llamadas_mensuales = 100  # Límite mensual de llamadas API
+tiempo_entre_peticiones = llamadas_mensuales/2592000  # segundos
 valor_inicial_id = 1000000
 headers = {"x-rapidapi-key": x_rapidapi_key, "x-rapidapi-host": x_rapidapi_host, "User-Agent": "PostmanRuntime/7.51.0"}
 
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     # url_futbol = "https://api-football.../standings?league=140&season=2020"
     # procesar_api_generica(url_futbol, headers, config_futbol, "./ficheros/futbol.csv")
     
-# --- EJEMPLO 2: IMDB (ADAPTADO) ---
+# --- EJEMPLO 2: IMDB ---
     
     headers_imdb = {
         "x-rapidapi-key": x_rapidapi_key, 
