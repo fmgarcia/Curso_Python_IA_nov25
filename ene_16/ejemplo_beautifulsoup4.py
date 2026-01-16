@@ -4,13 +4,34 @@ import csv
 import time
 import random
 
+# Librerías avanzadas para bypassing
+try:
+    import cloudscraper
+    CLOUDSCRAPER_DISPONIBLE = True
+except ImportError:
+    CLOUDSCRAPER_DISPONIBLE = False
+    print("⚠ cloudscraper no disponible. Instala con: pip install cloudscraper")
 
-def obtener_html(url):
+try:
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    SELENIUM_DISPONIBLE = True
+except ImportError:
+    SELENIUM_DISPONIBLE = False
+    print("⚠ selenium no disponible. Instala con: pip install selenium")
+
+
+def obtener_html(url, metodo='cloudscraper'):
     """
     Realiza una petición HTTP y devuelve el contenido HTML parseado.
+    Soporta múltiples métodos para evadir protecciones anti-bot.
     
     Args:
         url (str): URL de la página a obtener
+        metodo (str): Método a usar: 'cloudscraper', 'selenium', o 'requests'
         
     Returns:
         BeautifulSoup: Objeto BeautifulSoup con el HTML parseado
@@ -18,35 +39,132 @@ def obtener_html(url):
     Raises:
         requests.exceptions.RequestException: Si hay error en la petición HTTP
     """
-    # Crear una sesión para mantener cookies
-    session = requests.Session()
     
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br, zstd',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Sec-Ch-Ua': '"Not A(Brand";v="8", "Chromium";v="131", "Google Chrome";v="131"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Cache-Control': 'max-age=0',
-        'DNT': '1',
-        'Referer': 'https://www.google.com/'
-    }
+    # MÉTODO 1: CloudScraper (Mejor para Cloudflare y protecciones comunes)
+    if metodo == 'cloudscraper' and CLOUDSCRAPER_DISPONIBLE:
+        try:
+            print("🔧 Usando CloudScraper para bypassing avanzado...")
+            scraper = cloudscraper.create_scraper(
+                browser={
+                    'browser': 'chrome',
+                    'platform': 'windows',
+                    'desktop': True
+                },
+                delay=10
+            )
+            
+            # Simular comportamiento humano
+            time.sleep(random.uniform(2, 4))
+            
+            response = scraper.get(url, timeout=30)
+            response.raise_for_status()
+            
+            print("✓ Petición exitosa con CloudScraper")
+            return BeautifulSoup(response.text, 'html.parser')
+            
+        except Exception as e:
+            print(f"❌ Error con CloudScraper: {e}")
+            if SELENIUM_DISPONIBLE:
+                print("Intentando con Selenium...")
+                return obtener_html(url, metodo='selenium')
+            raise
     
-    # Simular comportamiento humano con delay aleatorio
-    time.sleep(random.uniform(1, 3))
+    # MÉTODO 2: Selenium (Navegador real automatizado - muy efectivo)
+    elif metodo == 'selenium' and SELENIUM_DISPONIBLE:
+        try:
+            print("🌐 Usando Selenium (navegador real)...")
+            
+            options = Options()
+            options.add_argument('--headless=new')  # Sin interfaz gráfica
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--disable-blink-features=AutomationControlled')
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_experimental_option('useAutomationExtension', False)
+            options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36')
+            
+            driver = webdriver.Chrome(options=options)
+            
+            # Modificar propiedades para evadir detección
+            driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            
+            print(f"Navegando a {url}...")
+            driver.get(url)
+            
+            # Esperar a que cargue el contenido
+            time.sleep(random.uniform(3, 6))
+            
+            # Esperar a que aparezcan las tarjetas de coches
+            try:
+                WebDriverWait(driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "mt-CardAd"))
+                )
+                print("✓ Contenido cargado")
+            except:
+                print("⚠ Timeout esperando contenido, continuando...")
+            
+            html = driver.page_source
+            driver.quit()
+            
+            print("✓ Petición exitosa con Selenium")
+            return BeautifulSoup(html, 'html.parser')
+            
+        except Exception as e:
+            print(f"❌ Error con Selenium: {e}")
+            raise
     
-    response = session.get(url, headers=headers, timeout=15, allow_redirects=True)
-    response.raise_for_status()
-    
-    return BeautifulSoup(response.text, 'html.parser')
+    # MÉTODO 3: Requests estándar (fallback)
+    else:
+        if metodo == 'cloudscraper' and not CLOUDSCRAPER_DISPONIBLE:
+            print("⚠ CloudScraper no disponible, usando requests estándar")
+        elif metodo == 'selenium' and not SELENIUM_DISPONIBLE:
+            print("⚠ Selenium no disponible, usando requests estándar")
+            
+        print("📡 Usando requests estándar con headers mejorados...")
+        
+        session = requests.Session()
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Sec-Ch-Ua': '"Not A(Brand";v="8", "Chromium";v="131", "Google Chrome";v="131"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Cache-Control': 'max-age=0',
+            'DNT': '1',
+            'Referer': 'https://www.google.com/'
+        }
+        
+        try:
+            # Visitar la página principal primero
+            print("Visitando página principal...")
+            home_response = session.get('https://www.coches.net/', headers=headers, timeout=15)
+            home_response.raise_for_status()
+            
+            time.sleep(random.uniform(2, 4))
+            
+            # Actualizar headers
+            headers['Referer'] = 'https://www.coches.net/'
+            headers['Sec-Fetch-Site'] = 'same-origin'
+            
+            print("Realizando petición principal...")
+            response = session.get(url, headers=headers, timeout=15, allow_redirects=True)
+            response.raise_for_status()
+            
+            print("✓ Petición exitosa con requests")
+            return BeautifulSoup(response.text, 'html.parser')
+            
+        except Exception as e:
+            print(f"❌ Error con requests: {e}")
+            raise
 
 
 def extraer_descripcion(tarjeta):
@@ -189,17 +307,18 @@ def guardar_en_csv(coches, nombre_archivo_csv):
     return True
 
 
-def extraer_coches_a_csv(url, nombre_archivo_csv):
+def extraer_coches_a_csv(url, nombre_archivo_csv, metodo='cloudscraper'):
     """
     Extrae información de coches desde coches.net y la guarda en un archivo CSV.
     
     Args:
         url (str): URL de la página de búsqueda en coches.net
         nombre_archivo_csv (str): Nombre del archivo CSV donde se guardarán los datos
+        metodo (str): Método de scraping: 'cloudscraper' (defecto), 'selenium', o 'requests'
     """
     try:
         # Obtener y parsear el HTML
-        soup = obtener_html(url)
+        soup = obtener_html(url, metodo=metodo)
         
         # Encontrar todas las tarjetas de coches
         tarjetas = obtener_tarjetas_coches(soup)
@@ -223,5 +342,12 @@ if __name__ == "__main__":
     archivo_salida = "./ficheros/coches_bmw_serie3.csv"
     
     print(f"Extrayendo datos de: {url_ejemplo}")
-    extraer_coches_a_csv(url_ejemplo, archivo_salida)
+    print("\nMétodos disponibles:")
+    print("  1. 'cloudscraper' - Bypassing avanzado de Cloudflare (RECOMENDADO)")
+    print("  2. 'selenium' - Navegador real automatizado (MUY EFECTIVO)")
+    print("  3. 'requests' - Peticiones HTTP estándar (básico)")
+    print()
+    
+    # Intenta primero con cloudscraper, luego selenium, finalmente requests
+    extraer_coches_a_csv(url_ejemplo, archivo_salida, metodo='selenium')
 
