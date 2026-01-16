@@ -48,6 +48,20 @@ def valores_defecto_3(a=1, b=2, c=3):
 def mezcla(obligatorio1,obligatorio2, opcional1=10, opcional2=20):
     return obligatorio1 + obligatorio2 + opcional1 + opcional2
 
+def info_persona(nombre, *aficiones):
+    if aficiones: # Si la tupla no está vacía
+        print(f"La primera afición de {nombre} es: {aficiones[0]}")
+    print(f"Las aficiones de {nombre} son: {', '.join(aficiones)}")
+    
+# Empaquetado de parámetros nominales
+def info_persona_nominal(nombre, **datos):
+    print(
+    f"""{nombre}:
+    DNI = {datos['dni']}
+    correo = {datos['correo']}
+    edad = {datos['edad']}"""
+    )
+
 
 saludar_y_despedir()
 saludar("Fran")
@@ -73,3 +87,11 @@ print(valores_defecto_3(10)) # 15
 print(valores_defecto_3(10,20)) # 33
 print(valores_defecto_3(10,20,30)) # 60
 print(mezcla(1,2,opcional2=3)) # 16
+
+# Empaquetado de parámetros
+info_persona("Ana", "leer", "viajar", "cine") # Las aficiones de Ana son: leer, viajar, cine
+info_persona("Luis") # Las aficiones de Luis son:
+info_persona("Marta", *["deporte", "música"]) # Las aficiones de Marta son: deporte, música
+
+# Desempaquetado de parámetros nominales
+info_persona_nominal("Pedro", edad= 43, dni="23454365G", correo="pedro@gmail.com")
