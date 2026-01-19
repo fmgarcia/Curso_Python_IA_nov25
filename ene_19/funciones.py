@@ -82,6 +82,12 @@ def f(a1, *args, n1, **kwargs):
 def suma_resta(x, y, *, resta=False):
     return x - y if resta else x + y
 
+def suma_resta2(x, y,/, *, resta=False):
+    return x - y if resta else x + y
+
+def suma_desempaquetada(a,b,c):
+    print(a+b+c)
+
 
 saludar_y_despedir()
 saludar("Fran")
@@ -123,3 +129,12 @@ print(suma_resta(4, 7)) # 11
 print(suma_resta(y=6, x=10)) # 16 (Pueden ser de ambos tipos)
 print(suma_resta(8, 3, resta=True)) # 5
 #print(suma_resta(4, 7, True)) # TypeError: suma_resta() takes 2 positional arguments but 3 were given
+
+# Uso de / y *
+print(suma_resta2(4, 7)) # 11
+print(suma_resta2(8, 3, resta=True)) # 5
+#print(suma_resta2(y=6, x=10)) # TypeError: suma_resta() got some positional-only arguments passed as keyword arguments: 'x, y'
+
+# Desempaquetado de listas/tuplas
+tupla = (1,2,3)
+suma_desempaquetada(*tupla) # 6
