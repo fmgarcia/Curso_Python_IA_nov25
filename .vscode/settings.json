@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./ene_16/ejemplo_"
+        "./ene_16/ejemplo_",
+        "./mislibrerias"
     ]
 }

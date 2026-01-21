@@ -15,8 +15,16 @@ Crea funciones para cada tipo de dato que realicen la extracción y validación,
 - Guarda toda la información extraída en un fichero csv con columnas para cada tipo de dato.
 '''
 import re
-import misfunciones as mf
+import os
+import sys
 import csv
+# Añadir la ruta de la carpeta 'mislibrerias' al sys.path para importar misfunciones
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'mislibrerias'))
+try:
+    import misfunciones as mf
+except ImportError:
+    print("No se pudo importar la librería 'misfunciones' desde la carpeta 'mislibrerias'. Asegúrate de que la ruta es correcta.")
+
 
 nombre_archivo = "./ficheros/datos_extraidos.csv"
 cadena = "Mi teléfono es 543582342 y mi DNI es 53954044T, tengo como mail a@a.com y nací el 27/07/1976 en Alicante"
