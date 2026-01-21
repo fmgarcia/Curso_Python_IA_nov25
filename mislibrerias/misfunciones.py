@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 import re
+import csv
 
 reg_dni = r'(\d{8})[-]?([A-Z])' # Expresión regular para un DNI español: 8 dígitos seguidos de una letra mayúscula (12345678A o 12345678-A)
 reg_telefono = r'(\d{3})[-\s]?(\d{3})[-\s]?(\d{3})' # Expresión regular para un número de teléfono español: 9 dígitos, puede llevar espacios o guiones (600123456, 600-123-456, 600 123 456)
@@ -103,7 +104,7 @@ def extraer_fechas(texto: str) -> list[str]:
     return [f"{f[0]}/{f[1]}/{f[2]}" for f in re.findall(reg_fecha, texto) if comprobar_fecha(f"{f[0]}/{f[1]}/{f[2]}")]
 
 
-def procesar_texto(texto_entrada: str, nombre_archivo: str) -> dict:
+def procesar_texto(texto_entrada: str) -> dict:
     '''
     Esta función procesa una cadena de texto para extraer y validar
     números de teléfono, DNI, correos electrónicos y fechas.\n
@@ -123,32 +124,85 @@ def procesar_texto(texto_entrada: str, nombre_archivo: str) -> dict:
         "emails": emails,
         "fechas": fechas
     }
-    # 3. Guardar en CSV
-    #mf.guardar_datos_csv(nombre_archivo, datos_completos)
-    # 4. Retorno
+
+    # 3. Retorno
     return datos_completos
 
-def procesar_personas(texto_entrada: str, nombre_archivo: str) -> dict:
+def procesar_personas(texto_entrada: str) -> list[dict]:
     '''
     Esta función procesa una cadena de texto para extraer y validar
     números de teléfono, DNI, correos electrónicos y fechas.\n
     texto_entrada: Cadena de texto a procesar\n
     return: Diccionario con listas de los datos extraídos y validados por persona
     '''
-    # 1. Extracciones
-    dnis = extraer_dnis(texto_entrada)
-    teléfonos = extraer_telefonos(texto_entrada)
-    emails = extraer_correos(texto_entrada)
-    fechas = extraer_fechas(texto_entrada)
     
-    # 2. Empaquetado
-    datos_completos = {
-        "dnis": dnis,
-        "teléfonos": teléfonos,
-        "emails": emails,
-        "fechas": fechas
-    }
-    # 3. Guardar en CSV
-    #mf.guardar_datos_csv(nombre_archivo, datos_completos)
-    # 4. Retorno
-    return datos_completos
+    lineas = [l for l in texto_entrada.splitlines() if l.strip()] # Eliminar líneas vacías. Obtengo una lista donde cada elemento es una línea
+    registros = []
+    for linea in lineas:
+        registro = {}
+        dnis = extraer_dnis(linea)
+        teléfonos = extraer_telefonos(linea)
+        emails = extraer_correos(linea)
+        fechas = extraer_fechas(linea)
+        registro["dni"] = dnis[0] if dnis else ""
+        registro["telefonos"] = teléfonos
+        registro["emails"] = emails
+        registro["fecha_nacimiento"] = fechas[0] if fechas else ""
+        registros.append(registro)
+       
+    return registros
+
+
+def guardar_datos_csv(nombre_archivo: str, datos: dict):
+    '''
+    Esta función guarda los datos extraídos en un archivo CSV.\n
+    nombre_archivo: Nombre del archivo CSV\n
+    datos: Diccionario con listas de datos a guardar
+    '''
+    with open(nombre_archivo, mode='w', newline='', encoding='utf-8') as archivo_csv:
+        escritor_csv = csv.writer(archivo_csv)
+        # Escribir la cabecera
+        escritor_csv.writerow(datos.keys())
+        # Obtener la longitud máxima de las listas para iterar correctamente
+        max_len = max(len(v) for v in datos.values())
+        for i in range(max_len):
+            fila = []
+            for clave in datos.keys():
+                lista = datos[clave]
+                if i < len(lista):
+                    fila.append(lista[i])
+                else:
+                    fila.append('')  # Rellenar con vacío si no hay más datos
+            escritor_csv.writerow(fila)
+            
+def guardar_personas(nombre_archivo: str, personas: list[dict]) -> bool:
+    '''
+    Esta función guarda los datos de las personas extraídas en un archivo CSV.\n
+    nombre_archivo: Nombre del archivo CSV\n
+    personas: Lista de diccionarios con los datos de cada persona
+    '''
+    
+    if not personas:
+        print("No hay datos para guardar.")
+        return False  # No hay datos para guardar
+    
+    # Crear el encabezado dinámicamente a partir de las claves del primer diccionario
+    encabezado = list(personas[0].keys())
+    
+    try:
+        with open(nombre_archivo, mode='w', newline='', encoding='utf-8') as archivo_csv:
+            escritor_csv = csv.writer(archivo_csv)
+            # Escribir la cabecera (la primera fila)
+            escritor_csv.writerow(encabezado)
+            for persona in personas:
+                escritor_csv.writerow([
+                    persona.get("dni", ""),
+                    ';'.join(persona.get("telefonos", [])),  # Unir múltiples teléfonos con ;
+                    ';'.join(persona.get("emails", [])),     # Unir múltiples emails con ;
+                    persona.get("fecha_nacimiento", "")
+                ])
+        print(f"{len(personas)} personas guardadas correctamente en {nombre_archivo}")
+        return True
+    except Exception as e:
+        print(f"Error al guardar los datos en el archivo CSV: {e}")
+        return False

@@ -28,11 +28,13 @@ except ImportError:
 
 nombre_archivo = "./ficheros/datos_extraidos.csv"
 cadena = """
-    Mi teléfono es 643582342 y mi DNI es 53954044T, tengo como mail a@a.com y nací el 27/07/1976 en Alicante
-    Otro contacto es Luis, su teléfono es 600-123-456, DNI 87654321-Z, correo luis@example.com y nació el 15-08-1980.
+    Mi teléfono es 643582342 y mi DNI es 53954044T y el de mi padre 52766449X, tengo como mail a@a.com y nací el 27/07/1976 en Alicante
+    Otro contacto es Luis, su teléfono es 600-123-456 y el fijo de casa es 952-123-456, DNI 87654321-Z, correo luis@example.com y nació el 15-08-1980.
     Contacto adicional: Ana, teléfono 700 654 321, DNI 12345678A, email ana@ana.com y fecha de nacimiento 31/02/1990.
     """
 
 if __name__ == "__main__":   
-    diccionario_procesado = mf.procesar_texto(cadena, nombre_archivo)
-    print(diccionario_procesado)
+    #diccionario_procesado = mf.procesar_texto(cadena)
+    #mf.guardar_datos_csv(nombre_archivo, diccionario_procesado)
+    lista_personas_procesadas = mf.procesar_personas(cadena)
+    mf.guardar_personas(nombre_archivo, lista_personas_procesadas)
