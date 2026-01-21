@@ -27,45 +27,12 @@ except ImportError:
 
 
 nombre_archivo = "./ficheros/datos_extraidos.csv"
-cadena = "Mi teléfono es 543582342 y mi DNI es 53954044T, tengo como mail a@a.com y nací el 27/07/1976 en Alicante"
-reg_dni = r'(\d{8})([A-Z])' # Expresión regular para un DNI español: 8 dígitos seguidos de una letra mayúscula
-
-def extraer_dnis(texto: str) -> list[str]:
-    '''
-    Esta función extrae y valida los DNI de una cadena de texto.\n
-    texto: Cadena de texto a procesar\n
-    return: Lista de DNI válidos encontrados
-    '''
-    return [f"{c[0]}{c[1]}" for c in re.findall(reg_dni, texto) if mf.dni_correcto(int(c[0]), c[1])]
-
-
-def procesar_texto(texto_entrada: str, nombre_archivo: str) -> dict:
-    '''
-    Esta función procesa una cadena de texto para extraer y validar
-    números de teléfono, DNI, correos electrónicos y fechas.\n
-    texto_entrada: Cadena de texto a procesar\n
-    return: Diccionario con listas de datos extraídos y validados
-    '''
-    # 1. Extracciones
-    dnis = extraer_dnis(texto_entrada)
-    #teléfonos = extraer_telefonos(texto_entrada)
-    #emails = extraer_correos(texto_entrada)
-    #fechas = extraer_fechas(texto_entrada)
-    
-    # 2. Empaquetado
-    datos_completos = {
-        "dnis": dnis,
-        #"teléfonos": teléfonos,
-        #"emails": emails,
-        #"fechas": fechas
-    }
-    # 3. Guardar en CSV
-    #mf.guardar_datos_csv(nombre_archivo, datos_completos)
-    # 4. Retorno
-    return datos_completos
-
-
+cadena = """
+    Mi teléfono es 643582342 y mi DNI es 53954044T, tengo como mail a@a.com y nací el 27/07/1976 en Alicante
+    Otro contacto es Luis, su teléfono es 600-123-456, DNI 87654321-Z, correo luis@example.com y nació el 15-08-1980.
+    Contacto adicional: Ana, teléfono 700 654 321, DNI 12345678A, email ana@ana.com y fecha de nacimiento 31/02/1990.
+    """
 
 if __name__ == "__main__":   
-    diccionario_procesado = procesar_texto(cadena, nombre_archivo)
+    diccionario_procesado = mf.procesar_texto(cadena, nombre_archivo)
     print(diccionario_procesado)
