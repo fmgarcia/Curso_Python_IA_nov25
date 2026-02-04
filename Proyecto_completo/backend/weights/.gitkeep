@@ -1,0 +1,2 @@
+# Esta carpeta almacena los pesos de los modelos entrenados (.joblib)
+# Los archivos se generan automáticamente al entrenar cada modelo
