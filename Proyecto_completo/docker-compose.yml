@@ -41,8 +41,12 @@ services:
         - REACT_APP_API_URL=/api
     container_name: detecciontumores-frontend
     restart: always
-    ports:
-      - "80:80"
+    # ELIMINA ESTO:
+    # ports:
+    #   - "80:80"
+    # AÑADE ESTO:
+    expose:
+      - "80"
     depends_on:
       - backend
     networks:
