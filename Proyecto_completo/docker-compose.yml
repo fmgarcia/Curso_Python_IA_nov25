@@ -1,9 +1,12 @@
 # ============================================
 # Docker Compose - Sistema de Detección de Tumores
-# Configuración para producción en VPS
+# Configuración para despliegue en Dokploy (Contabo VPS)
+# 
+# IMPORTANTE: Este archivo se usa desde la raíz del repositorio.
+# El proyecto vive en la subcarpeta Proyecto_completo/
+# Dokploy debe configurarse con:
+#   - Compose Path: ./Proyecto_completo/docker-compose.yml
 # ============================================
-
-version: '3.8'
 
 services:
   # ---- Backend API (FastAPI) ----
@@ -11,21 +14,19 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tumor-detection-backend
+    container_name: detecciontumores-backend
     restart: always
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     volumes:
-      # Persistencia de modelos entrenados
       - backend_weights:/app/weights
-      # Persistencia de datasets personalizados
       - backend_uploads:/app/uploads
     environment:
       - ENVIRONMENT=production
     networks:
-      - app-network
+      - dokploy-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -38,16 +39,16 @@ services:
       dockerfile: Dockerfile
       args:
         - REACT_APP_API_URL=/api
-    container_name: tumor-detection-frontend
+    container_name: detecciontumores-frontend
     restart: always
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-      - app-network
+      - dokploy-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -55,12 +56,11 @@ services:
 # ---- Volúmenes persistentes ----
 volumes:
   backend_weights:
-    name: tumor-detection-weights
+    name: detecciontumores-weights
   backend_uploads:
-    name: tumor-detection-uploads
+    name: detecciontumores-uploads
 
-# ---- Red interna ----
+# ---- Red ----
 networks:
-  app-network:
-    driver: bridge
-    name: tumor-detection-network
+  dokploy-network:
+    external: true

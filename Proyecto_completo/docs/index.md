@@ -51,12 +51,12 @@ Guía de pruebas:
 - Tests de UI/UX
 
 ### 🐳 [Despliegue en Producción](./despliegue.md)
-Guía de despliegue con Docker:
-- Configuración del VPS Contabo
-- Instalación de Docker
-- Despliegue manual y automático (CI/CD)
-- Configuración de SSL (HTTPS)
-- Mantenimiento y backups
+Guía de despliegue con Dokploy en Contabo VPS:
+- Configuración de Dokploy con repositorio GitHub
+- Docker Compose para subcarpeta Proyecto_completo/
+- Despliegue automático con CI/CD y Webhooks
+- Dominio y SSL con Traefik
+- Mantenimiento, backups y monitorización
 - Tests de UI/UX
 
 ---
