@@ -12,7 +12,7 @@ services:
   # ---- Backend API (FastAPI) ----
   backend:
     build:
-      context: ./Proyecto_completo/backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: detecciontumores-backend
     restart: always
@@ -35,7 +35,7 @@ services:
   # ---- Frontend (React + Nginx) ----
   frontend:
     build:
-      context: ./Proyecto_completo/frontend
+      context: ./frontend
       dockerfile: Dockerfile
       args:
         - REACT_APP_API_URL=/api
