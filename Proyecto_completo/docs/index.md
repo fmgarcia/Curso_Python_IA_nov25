@@ -50,6 +50,15 @@ Guía de pruebas:
 - Tests de integración
 - Tests de UI/UX
 
+### 🐳 [Despliegue en Producción](./despliegue.md)
+Guía de despliegue con Docker:
+- Configuración del VPS Contabo
+- Instalación de Docker
+- Despliegue manual y automático (CI/CD)
+- Configuración de SSL (HTTPS)
+- Mantenimiento y backups
+- Tests de UI/UX
+
 ---
 
 ## 🔗 Enlaces Rápidos

@@ -1,0 +1,79 @@
+# ============================================
+# Docker Compose - Producción con SSL (HTTPS)
+# Sistema de Detección de Tumores
+# Usar este archivo para producción con dominio
+# ============================================
+
+version: '3.8'
+
+services:
+  # ---- Backend API (FastAPI) ----
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tumor-detection-backend
+    restart: always
+    expose:
+      - "8000"
+    volumes:
+      - backend_weights:/app/weights
+      - backend_uploads:/app/uploads
+    environment:
+      - ENVIRONMENT=production
+    networks:
+      - app-network
+
+  # ---- Frontend (React + Nginx) ----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=/api
+    container_name: tumor-detection-frontend
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # ---- Nginx Proxy con SSL ----
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
+  # ---- Certbot para SSL ----
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+volumes:
+  backend_weights:
+    name: tumor-detection-weights
+  backend_uploads:
+    name: tumor-detection-uploads
+
+networks:
+  app-network:
+    driver: bridge
+    name: tumor-detection-network

@@ -1,0 +1,66 @@
+# ============================================
+# Docker Compose - Sistema de Detección de Tumores
+# Configuración para producción en VPS
+# ============================================
+
+version: '3.8'
+
+services:
+  # ---- Backend API (FastAPI) ----
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tumor-detection-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persistencia de modelos entrenados
+      - backend_weights:/app/weights
+      # Persistencia de datasets personalizados
+      - backend_uploads:/app/uploads
+    environment:
+      - ENVIRONMENT=production
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ---- Frontend (React + Nginx) ----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=/api
+    container_name: tumor-detection-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# ---- Volúmenes persistentes ----
+volumes:
+  backend_weights:
+    name: tumor-detection-weights
+  backend_uploads:
+    name: tumor-detection-uploads
+
+# ---- Red interna ----
+networks:
+  app-network:
+    driver: bridge
+    name: tumor-detection-network
